@@ -22,3 +22,12 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Controller\ConverterController:
+        public: true
+
+    App\UrlCompressor\Helpers\CheckUrl:
+        arguments:
+            $timeout: 6
+            $statusCodes: [200,301,302,404]
+            $userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (HTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36'
