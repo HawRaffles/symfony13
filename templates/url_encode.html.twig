@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Закодувати url {% endblock %}
+
+{% block body %}
+
+    <section>
+        <form action="{{ action }}" method="post">
+            <label>Url: <input type="text" name="url"></label>
+            <button type="submit">Зберегти</button>
+        </form>
+    </section>
+
+{% endblock %}

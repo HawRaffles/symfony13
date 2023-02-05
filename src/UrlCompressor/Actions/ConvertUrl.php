@@ -4,6 +4,7 @@ namespace App\UrlCompressor\Actions;
 
 use App\Entity\EncodedUrls;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use InvalidArgumentException;
 use App\UrlCompressor\Interfaces\ICheckUrl;
 use App\UrlCompressor\Interfaces\IUrlDecoder;
@@ -42,10 +43,41 @@ class ConvertUrl implements IUrlEncoder, IUrlDecoder
      */
     public function decode(string $code): string
     {
+        return $this->decodeAllData($code)->getUrl();
+    }
+
+    /**
+     * @param string $code
+     * @return string
+     */
+    public function decodeAndRedirect(string $code): string
+    {
+        $result = $this->decodeAllData($code);
+        $result->fixRedirect();
+        $entityManager = $this->doctrine->getManager();
+        $entityManager->persist($result);
+        $entityManager->flush();
+        return $result->getUrl();
+    }
+
+    /**
+     * @param string $code
+     * @return EncodedUrls
+     */
+    public function decodeAllData(string $code): EncodedUrls
+    {
         $result = $this->doctrine->getRepository(EncodedUrls::class)->findBy(['code' => $code], null, 1);
         if (empty($result))
             throw new InvalidArgumentException('Вказаний код ' . $code . ' URL-у відсутній в базі!');
-        return $result[0]->getUrl();
+        return $result[0];
+    }
+
+    /**
+     * @return ObjectRepository
+     */
+    public function getAllData(): ObjectRepository
+    {
+        return $this->doctrine->getRepository(EncodedUrls::class);
     }
 
     /**
