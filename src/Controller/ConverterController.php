@@ -33,16 +33,21 @@ class ConverterController extends AbstractController
     #[Route('/encode', name: 'url_encode', methods: ['POST'])]
     public function getCode(Request $request): Response
     {
+        $result = null;
         $url = $request->request->get('url');
-        $result = $this->encoder->checkExistUrl($url);
-        if (empty($result)) {
+        $code = $this->encoder->checkExistUrl($url);
+
+        if (empty($code)) {
             try {
                 $code = $this->encoder->encode($url);
-                $result = new RedirectResponse($this->generateUrl('url_statistics', ['code' => $code]));
             } catch (InvalidArgumentException) {
                 $result = new Response("Невалідний url $url");
             }
         }
+
+        if (empty($result))
+            $result = new RedirectResponse($this->generateUrl('url_statistics', ['code' => $code]));
+
         return $result;
     }
 
