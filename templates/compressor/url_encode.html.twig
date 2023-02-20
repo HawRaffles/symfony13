@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Закодувати url {% endblock %}
+
+{% block body %}
+    <div class="container-fluid pt-4">
+    <form class="row g-3" action="{{ action }}" method="post">
+        <div class="col-auto">
+            <label for="staticEmail2" class="visually-hidden">Url</label>
+            <input type="text" name="url" class="form-control">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-3">Compress</button>
+        </div>
+    </form>
+    </div>
+{% endblock %}

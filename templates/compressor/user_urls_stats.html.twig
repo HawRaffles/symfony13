@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Стастика користувача {% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row pt-4">
+    {% for item in items %}
+        <div class="col-3">
+        <div class="card" style="width: 18rem;">
+            <div class="card-header">Id: {{ item.id }}</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Code: {{ item.code }}</li>
+                <li class="list-group-item">Url: {{ item.url }}</li>
+                <li class="list-group-item">Redirects: {{ item.redirects }}</li>
+                <li class="list-group-item">Create Date: {{ item.create_date }}</li>
+                <li class="list-group-item">Last Redirect Date: {{ item.redirect_date }}</li>
+            </ul>
+        </div>
+        </div>
+    {% endfor %}
+        </div>
+    </div>
+{% endblock %}

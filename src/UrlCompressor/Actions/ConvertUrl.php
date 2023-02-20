@@ -3,12 +3,15 @@
 namespace App\UrlCompressor\Actions;
 
 use App\Entity\EncodedUrls;
+use App\Entity\Users;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
 use InvalidArgumentException;
 use App\UrlCompressor\Interfaces\ICheckUrl;
 use App\UrlCompressor\Interfaces\IUrlDecoder;
 use App\UrlCompressor\Interfaces\IUrlEncoder;
+use Symfony\Bundle\SecurityBundle\Security;
+use Throwable;
 
 class ConvertUrl implements IUrlEncoder, IUrlDecoder
 {
@@ -18,7 +21,8 @@ class ConvertUrl implements IUrlEncoder, IUrlDecoder
      */
     public function __construct(
         protected ICheckUrl $urlValidator,
-        protected ManagerRegistry $doctrine
+        protected ManagerRegistry $doctrine,
+        protected Security $security
     )
     {
     }
@@ -80,6 +84,12 @@ class ConvertUrl implements IUrlEncoder, IUrlDecoder
         return $this->doctrine->getRepository(EncodedUrls::class);
     }
 
+    public function getDataByUser(): array
+    {
+        $user = $this->security->getUser();
+        return $this->doctrine->getRepository(EncodedUrls::class)->findBy(['user' => $user]);
+    }
+
     /**
      * @param string $url
      * @return string|array
@@ -99,8 +109,9 @@ class ConvertUrl implements IUrlEncoder, IUrlDecoder
      */
     private function addCode($code, $url): void
     {
+        $user = $this->security->getUser();
         $entityManager = $this->doctrine->getManager();
-        $encodedUrl = new EncodedUrls($code, $url);
+        $encodedUrl = new EncodedUrls($code, $url, $user);
         $entityManager->persist($encodedUrl);
         $entityManager->flush();
     }

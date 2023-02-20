@@ -29,12 +29,18 @@ class EncodedUrls
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private \DateTime $lastRedirectDate;
 
+    #[ORM\ManyToOne(targetEntity: Users::class, inversedBy: 'urls')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private Users $user;
+
     /**
      * @param string $code
+     *
      * @param string $url
      */
-    public function __construct(string $code, string $url)
+    public function __construct(string $code, string $url, Users $user)
     {
+        $this->user = $user;
         $this->code = $code;
         $this->url = $url;
         $this->setCreateDate();
@@ -46,6 +52,14 @@ class EncodedUrls
     public function getId(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @return Users
+     */
+    public function getUser(): Users
+    {
+        return $this->user;
     }
 
     /**

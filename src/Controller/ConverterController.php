@@ -78,7 +78,7 @@ class ConverterController extends AbstractController
         $parameters = [];
         try {
             $result = $this->decoder->decodeAllData($code);
-            $template = 'url_decode.html.twig';
+            $template = 'compressor/url_decode.html.twig';
             $parameters = [
                 'id' => $result->getId(),
                 'code' => $code,
@@ -97,13 +97,41 @@ class ConverterController extends AbstractController
         return $this->render($template, $parameters);
     }
 
+    #[Route('/user/urls', name: 'urls_by_user', methods: ['GET'])]
+    public function getUrlsByUser(): Response
+    {
+        $parameters = [];
+        try {
+            $parameters['items'] = [];
+            $results = $this->decoder->getDataByUser();
+            $template = 'compressor/user_urls_stats.html.twig';
+            foreach($results as $result) {
+                $parameters['items'][] = [
+                        'id' => $result->getId(),
+                        'code' => $result->getCode(),
+                        'url' => $result->getUrl(),
+                        'redirects' => $result->getRedirects(),
+                        'create_date' => $result->getCreateDate()->format('Y-m-d H:i:s'),
+                        'redirect_date' => ($result->getRedirects() > 0) ? $result->getLastRedirectDate()
+                            ->format('Y-m-d H:i:s') : '-'
+                ];
+            }
+        } catch (\Throwable $e) {
+            $template = 'error.html.twig';
+            $parameters = [
+                'error' => $e
+            ];
+        }
+        return $this->render($template, $parameters);
+    }
+
     /**
      * @return Response
      */
     #[Route('/code/new', name: 'url_encode_form', methods: ['GET'])]
     public function newEncode(): Response
     {
-        $template = 'url_encode.html.twig';
+        $template = 'compressor/url_encode.html.twig';
         $parameters = [
             'action' => $this->generateUrl('url_encode')
         ];
@@ -132,7 +160,7 @@ class ConverterController extends AbstractController
     #[Route('/{path}', requirements: ['path' => '.*'], methods: ['GET'])]
     public function defaultUrlInterface(): Response
     {
-        $template = 'url_default.html.twig';
+        $template = 'compressor/url_default.html.twig';
         return $this->render($template, ['message' => 'Сторінку управління url не знайдено'], new Response('', 404));
     }
 }

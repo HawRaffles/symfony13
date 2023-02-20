@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Статистика переходів по коду {{ code }} {% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row pt-4">
+            <div class="col-3">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-header">Id: {{ id }}</div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Code: {{ code }}</li>
+                        <li class="list-group-item">Url: {{ url }}</li>
+                        <li class="list-group-item">Redirects: {{ redirects }}</li>
+                        <li class="list-group-item">Create Date: {{ create_date }}</li>
+                        <li class="list-group-item">Last Redirect Date: {{ redirect_date }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
